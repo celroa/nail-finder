@@ -359,8 +359,12 @@
         const { profesionales } = await resp.json();
         grid.innerHTML = "";
 
+        const imagenesDisponibles = [...imagenes];
+
         profesionales.forEach((prof) => {
-          const imgRandom = imagenes[Math.floor(Math.random() * imagenes.length)];
+          const imgRandom = imagenesDisponibles.length
+            ? imagenesDisponibles.splice(Math.floor(Math.random() * imagenesDisponibles.length), 1)[0]
+            : imagenes[Math.floor(Math.random() * imagenes.length)];
 
           const card = document.createElement("article");
           card.className = "card";
