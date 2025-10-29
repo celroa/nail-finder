@@ -1,14 +1,16 @@
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxhd3RrcmFzZmxwaHZjd3hkbmx3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc2MzY2NDAsImV4cCI6MjA3MzIxMjY0MH0.A18gO8TBTctb-KcN3Nf8n7dEIXQ_WtwuIr5bKUTUizs"; // 👈 reemplaza con tu JWT válido
+const CLIENTE_ID = "0825d76a-7fd8-44ef-a9ed-b67a85e6721e";
+const SUPABASE_URL = "https://lawtkrasflphvcwxdnlw.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxhd3RrcmFzZmxwaHZjd3hkbmx3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc2MzY2NDAsImV4cCI6MjA3MzIxMjY0MH0.A18gO8TBTctb-KcN3Nf8n7dEIXQ_WtwuIr5bKUTUizs";
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 document.addEventListener("DOMContentLoaded", () => {
-  const yearSpan = document.getElementById("yy");
-  if (yearSpan) {
-    yearSpan.textContent = new Date().getFullYear();
-  }
-
-  const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxhd3RrcmFzZmxwaHZjd3hkbmx3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc2MzY2NDAsImV4cCI6MjA3MzIxMjY0MH0.A18gO8TBTctb-KcN3Nf8n7dEIXQ_WtwuIr5bKUTUizs"; // 👈 pega aquí tu JWT válido
-  const CLIENTE_ID = "0825d76a-7fd8-44ef-a9ed-b67a85e6721e";
-
   const elements = {
     body: document.body,
+    yearSpan: document.getElementById("yy"),
     searchForm: document.querySelector(".search"),
     vistaListado: document.getElementById("vista-listado"),
     vistaDetalle: document.getElementById("vista-detalle"),
@@ -19,6 +21,9 @@ document.addEventListener("DOMContentLoaded", () => {
     profTrabajos: document.getElementById("prof-trabajos"),
     btnVolver: document.getElementById("btn-volver"),
     btnContratar: document.getElementById("btn-contratar"),
+    btnLogin: document.getElementById("btn-login"),
+    btnLogout: document.getElementById("btn-logout"),
+    authGreeting: document.getElementById("auth-greeting"),
     modalOverlay: document.getElementById("modal-contratar"),
     modalForm: document.getElementById("form-contratar"),
     modalServiceSelect: document.getElementById("modal-servicio-id"),
@@ -30,15 +35,61 @@ document.addEventListener("DOMContentLoaded", () => {
   const modalCloseBtn = elements.modalOverlay?.querySelector(".modal-close");
   const modalCancelBtn = elements.modalOverlay?.querySelector("[data-modal-cancel]");
 
-  let profesionalActual = null;
   const servicioPlaceholder = '<option value="">Selecciona un servicio</option>';
+  const imagenesBase = [
+    "./public/static/images/image1.jpg",
+    "./public/static/images/image2.png",
+    "./public/static/images/image3.jpg",
+  ];
+
+  let profesionalActual = null;
+
+  if (elements.yearSpan) {
+    elements.yearSpan.textContent = new Date().getFullYear();
+  }
 
   if (elements.modalClienteInput) {
     elements.modalClienteInput.value = CLIENTE_ID;
   }
 
-  if (elements.searchForm) {
-    elements.searchForm.addEventListener("submit", (event) => event.preventDefault());
+  elements.searchForm?.addEventListener("submit", (event) => event.preventDefault());
+
+  function renderAuth(user) {
+    if (!elements.btnLogin || !elements.btnLogout || !elements.authGreeting) return;
+    if (user) {
+      const displayName = user.user_metadata?.full_name || user.email || "usuario";
+      elements.authGreeting.textContent = `Hola ${displayName}`;
+      elements.btnLogin.classList.add("hidden");
+      elements.btnLogout.classList.remove("hidden");
+    } else {
+      elements.authGreeting.textContent = "";
+      elements.btnLogin.classList.remove("hidden");
+      elements.btnLogout.classList.add("hidden");
+    }
+  }
+
+  async function handleLogin() {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: window.location.origin,
+        },
+      });
+      if (error) throw error;
+    } catch (error) {
+      alert(error.message);
+    }
+  }
+
+  async function handleLogout() {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      renderAuth(null);
+    } catch (error) {
+      alert(error.message);
+    }
   }
 
   function poblarServicios(profesional) {
@@ -71,9 +122,7 @@ document.addEventListener("DOMContentLoaded", () => {
     elements.modalOverlay.classList.add("hidden");
     elements.modalOverlay.setAttribute("aria-hidden", "true");
     elements.body.style.overflow = "";
-    if (elements.modalForm) {
-      elements.modalForm.reset();
-    }
+    elements.modalForm?.reset();
     if (elements.modalClienteInput) {
       elements.modalClienteInput.value = CLIENTE_ID;
     }
@@ -145,12 +194,6 @@ document.addEventListener("DOMContentLoaded", () => {
   async function cargarProfesionales() {
     if (!elements.gridProfesionales) return;
 
-    const imagenes = [
-      "./public/static/images/image1.jpg",
-      "./public/static/images/image2.png",
-      "./public/static/images/image3.jpg",
-    ];
-
     try {
       const resp = await fetch("https://lawtkrasflphvcwxdnlw.supabase.co/functions/v1/profesionales", {
         method: "GET",
@@ -165,12 +208,12 @@ document.addEventListener("DOMContentLoaded", () => {
       const { profesionales } = await resp.json();
       elements.gridProfesionales.innerHTML = "";
 
-      const imagenesDisponibles = [...imagenes];
+      const imagenesDisponibles = [...imagenesBase];
 
       profesionales.forEach((prof) => {
         const imgRandom = imagenesDisponibles.length
           ? imagenesDisponibles.splice(Math.floor(Math.random() * imagenesDisponibles.length), 1)[0]
-          : imagenes[Math.floor(Math.random() * imagenes.length)];
+          : imagenesBase[Math.floor(Math.random() * imagenesBase.length)];
 
         const card = document.createElement("article");
         card.className = "card";
@@ -188,8 +231,7 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
 
         card.addEventListener("click", () => verDetalle(prof.id));
-        const btn = card.querySelector(".btn");
-        btn?.addEventListener("click", (event) => {
+        card.querySelector(".btn")?.addEventListener("click", (event) => {
           event.stopPropagation();
           verDetalle(prof.id);
         });
@@ -289,6 +331,8 @@ document.addEventListener("DOMContentLoaded", () => {
     elements.vistaListado.classList.remove("hidden");
   }
 
+  elements.btnLogin?.addEventListener("click", handleLogin);
+  elements.btnLogout?.addEventListener("click", handleLogout);
   elements.btnContratar?.addEventListener("click", abrirModal);
   elements.btnVolver?.addEventListener("click", volverListado);
   modalCloseBtn?.addEventListener("click", cerrarModal);
@@ -304,6 +348,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
   elements.modalForm?.addEventListener("submit", enviarReserva);
+
+  (async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    renderAuth(session?.user ?? null);
+  })();
+
+  supabase.auth.onAuthStateChange((_event, session) => {
+    renderAuth(session?.user ?? null);
+  });
 
   cargarProfesionales();
 });
