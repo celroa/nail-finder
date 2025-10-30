@@ -1,6 +1,6 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxhd3RrcmFzZmxwaHZjd3hkbmx3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc2MzY2NDAsImV4cCI6MjA3MzIxMjY0MH0.A18gO8TBTctb-KcN3Nf8n7dEIXQ_WtwuIr5bKUTUizs"; // 👈 reemplaza con tu JWT válido
+const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxhd3RrcmFzZmxwaHZjd3hkbmx3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc2MzY2NDAsImV4cCI6MjA3MzIxMjY0MH0.A18gO8TBTctb-KcN3Nf8n7dEIXQ_WtwuIr5bKUTUizs";
 const CLIENTE_ID = "0825d76a-7fd8-44ef-a9ed-b67a85e6721e";
 const SUPABASE_URL = "https://lawtkrasflphvcwxdnlw.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxhd3RrcmFzZmxwaHZjd3hkbmx3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc2MzY2NDAsImV4cCI6MjA3MzIxMjY0MH0.A18gO8TBTctb-KcN3Nf8n7dEIXQ_WtwuIr5bKUTUizs";
@@ -30,10 +30,14 @@ document.addEventListener("DOMContentLoaded", () => {
     modalProfesionalInput: document.getElementById("modal-profesional-id"),
     modalClienteInput: document.getElementById("modal-cliente-id"),
     modalTitle: document.getElementById("modal-title"),
+    lightbox: document.getElementById("lightbox"),
+    lightboxImage: document.getElementById("lightbox-image"),
+    lightboxCaption: document.getElementById("lightbox-caption"),
   };
 
   const modalCloseBtn = elements.modalOverlay?.querySelector(".modal-close");
   const modalCancelBtn = elements.modalOverlay?.querySelector("[data-modal-cancel]");
+  const lightboxCloseElements = elements.lightbox?.querySelectorAll("[data-lightbox-close]");
 
   const servicioPlaceholder = '<option value="">Selecciona un servicio</option>';
   const imagenesBase = [
@@ -115,6 +119,36 @@ document.addEventListener("DOMContentLoaded", () => {
       elements.modalTitle.textContent = `Agendar cita con ${profesionalActual.usuarios.nombre}`;
     }
     poblarServicios(profesionalActual);
+  }
+
+  function abrirLightbox(src, caption = "") {
+    if (!elements.lightbox || !elements.lightboxImage) return;
+    elements.lightboxImage.src = src;
+    elements.lightboxImage.alt = caption || "Imagen ampliada";
+    if (elements.lightboxCaption) {
+      elements.lightboxCaption.textContent = caption;
+      elements.lightboxCaption.classList.toggle("hidden", !caption);
+    }
+    elements.lightbox.classList.remove("hidden");
+    elements.lightbox.setAttribute("aria-hidden", "false");
+    elements.body.style.overflow = "hidden";
+  }
+
+  function cerrarLightbox() {
+    if (!elements.lightbox) return;
+    elements.lightbox.classList.add("hidden");
+    elements.lightbox.setAttribute("aria-hidden", "true");
+    if (elements.lightboxImage) {
+      elements.lightboxImage.src = "";
+      elements.lightboxImage.alt = "";
+    }
+    if (elements.lightboxCaption) {
+      elements.lightboxCaption.textContent = "";
+      elements.lightboxCaption.classList.remove("hidden");
+    }
+    if (!elements.modalOverlay || elements.modalOverlay.classList.contains("hidden")) {
+      elements.body.style.overflow = "";
+    }
   }
 
   function cerrarModal() {
@@ -238,6 +272,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         elements.gridProfesionales.appendChild(card);
       });
+      elements.gridProfesionales.querySelectorAll(".thumb img").forEach((img) => {
+        img.addEventListener("click", (event) => {
+          event.stopPropagation();
+          abrirLightbox(img.src, img.alt || "Profesional destacado");
+        });
+      });
     } catch (error) {
       console.error(error);
       elements.gridProfesionales.innerHTML = "<p>No se pudieron cargar los profesionales.</p>";
@@ -313,6 +353,12 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
         elements.profTrabajos.appendChild(card);
       });
+      elements.profTrabajos.querySelectorAll(".thumb img").forEach((img) => {
+        img.addEventListener("click", (event) => {
+          event.stopPropagation();
+          abrirLightbox(img.src, img.alt);
+        });
+      });
     }
 
     profesionalActual = profesional;
@@ -348,6 +394,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
   elements.modalForm?.addEventListener("submit", enviarReserva);
+  lightboxCloseElements?.forEach((btn) => btn.addEventListener("click", cerrarLightbox));
+  elements.lightbox?.addEventListener("click", (event) => {
+    if (event.target === elements.lightbox) {
+      cerrarLightbox();
+    }
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && elements.lightbox && !elements.lightbox.classList.contains("hidden")) {
+      cerrarLightbox();
+    }
+  });
 
   (async () => {
     const { data: { session } } = await supabase.auth.getSession();

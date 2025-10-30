@@ -23,6 +23,7 @@ Aplicación web enfocada en conectar clientes con profesionales de manicura, per
 - Asociación única de imágenes locales a cada card de profesional para evitar repeticiones.
 - Enlace directo al perfil de Instagram de cada profesional.
 - Inicio de sesión con Google usando Supabase Auth y saludo personalizado en la navegación.
+- Lightbox para ampliar las fotografías de trabajos realizados o imágenes de profesionales.
 
 ---
 
@@ -71,7 +72,8 @@ Proyecto Nails Finder/
 2. **Ver detalle:** haz clic en una card o en el botón “Contratar” para abrir la vista de detalles del profesional.
 3. **Visitar Instagram:** utiliza el botón “Visitar Instagram” para abrir la red social en una pestaña nueva.
 4. **Iniciar sesión con Google:** desde la barra de navegación pulsa “Inicia sesión con Google”. Una vez autenticado, verás un saludo y tendrás disponible el botón de “Cerrar sesión”.
-5. **Agendar cita:** pulsa “Contratar ahora” para abrir el modal, completa los datos requeridos y envía la reserva. Se mostrará una alerta informando el resultado de la operación.
+5. **Ampliar imágenes:** haz clic en cualquier fotografía de profesional o trabajo para verla en grande; usa el botón de cierre o la tecla `Escape` para volver.
+6. **Agendar cita:** pulsa “Contratar ahora” para abrir el modal, completa los datos requeridos y envía la reserva. Se mostrará una alerta informando el resultado de la operación.
 
 ---
 
