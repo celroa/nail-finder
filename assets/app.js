@@ -311,16 +311,38 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (elements.profInfo) {
       elements.profInfo.innerHTML = `
-        <p>💼 <strong>Experiencia:</strong> ${profesional.experiencia} años</p>
-        <p>⭐ <strong>Calificación:</strong> ${profesional.calificacion_promedio}</p>
-        <p>📍 <strong>Dirección:</strong> ${profesional.direccion}</p>
-        <p>📞 <strong>Teléfono:</strong> ${profesional.usuarios.telefono}</p>
-        <p>📧 <strong>Email:</strong> ${profesional.usuarios.email}</p>
-        <p>${profesional.descripcion}</p>
-        <a class="btn-instagram" href="https://www.instagram.com/anny_nails_studio_?igsh=OXcwazJsenVxMDRs" target="_blank" rel="noopener noreferrer">
-          <span aria-hidden="true">📸</span>
-          Visitar Instagram
-        </a>
+        <div class="prof-header">
+          <p class="prof-description">${profesional.descripcion}</p>
+          <a class="btn-instagram" href="https://www.instagram.com/anny_nails_studio_?igsh=OXcwazJsenVxMDRs" target="_blank" rel="noopener noreferrer">
+            <span class="sr-only">Visitar Instagram de ${profesional.usuarios.nombre}</span>
+          </a>
+        </div>
+        <div class="table-responsive">
+          <table class="prof-table">
+            <tbody>
+              <tr>
+                <th scope="row">Experiencia</th>
+                <td>${profesional.experiencia} años</td>
+              </tr>
+              <tr>
+                <th scope="row">Calificación</th>
+                <td>${profesional.calificacion_promedio}</td>
+              </tr>
+              <tr>
+                <th scope="row">Dirección</th>
+                <td>${profesional.direccion}</td>
+              </tr>
+              <tr>
+                <th scope="row">Teléfono</th>
+                <td>${profesional.usuarios.telefono}</td>
+              </tr>
+              <tr>
+                <th scope="row">Email</th>
+                <td>${profesional.usuarios.email}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       `;
     }
 
