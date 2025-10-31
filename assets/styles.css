@@ -497,6 +497,56 @@ footer{
   0%,100%{ box-shadow:0 12px 28px rgba(129,52,175,0.35); }
   50%{ box-shadow:0 15px 45px rgba(129,52,175,0.55); }
 }
+.alert-overlay{
+  position:fixed;
+  inset:0;
+  display:grid;
+  place-items:center;
+  background:rgba(0,0,0,0.55);
+  z-index:1300;
+  padding:1.5rem;
+}
+.alert-dialog{
+  width:min(420px, 100%);
+  background:linear-gradient(180deg, #ffffff 40%, rgba(255,202,225,0.75) 100%);
+  border-radius:1.5rem;
+  padding:2rem 2.25rem;
+  box-shadow:0 35px 80px rgba(0,0,0,0.25);
+  text-align:center;
+  display:grid;
+  gap:1.2rem;
+  border:1px solid rgba(224,136,168,0.45);
+}
+.alert-icon{
+  font-size:2.5rem;
+  line-height:1;
+  animation:instaPulse 6s ease-in-out infinite;
+}
+.alert-dialog h3{
+  margin:0;
+  font-size:1.5rem;
+  color:var(--accent);
+}
+.alert-dialog p{
+  margin:0;
+  color:var(--muted);
+  line-height:1.6;
+  font-size:1rem;
+}
+.alert-actions{
+  display:flex;
+  gap:1rem;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+.alert-actions .btn-secondary{
+  border:1px solid rgba(174,99,124,0.35);
+  padding:.6rem 1.2rem;
+}
+.alert-actions .btn-contratar{
+  box-shadow:0 15px 30px rgba(174,99,124,0.35);
+  min-width:200px;
+}
 .sr-only{
   position:absolute;
   width:1px;

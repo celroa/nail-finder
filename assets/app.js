@@ -36,6 +36,9 @@ document.addEventListener("DOMContentLoaded", () => {
     lightboxDots: document.querySelector(".lightbox-dots"),
     lightboxPrev: document.querySelector(".lightbox-nav.prev"),
     lightboxNext: document.querySelector(".lightbox-nav.next"),
+    alertOverlay: document.getElementById("alerta-reserva"),
+    alertCloseBtn: document.querySelector("[data-alert-close]"),
+    alertWhatsapp: document.getElementById("alerta-whatsapp"),
   };
 
   const modalCloseBtn = elements.modalOverlay?.querySelector(".modal-close");
@@ -63,6 +66,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (elements.yearSpan) {
     elements.yearSpan.textContent = new Date().getFullYear();
+  }
+
+  function mostrarAlertaReserva(telefono) {
+    if (!elements.alertOverlay) return;
+    const whatsappNumber = telefono?.replace(/\D+/g, "") || "";
+    const mensaje = encodeURIComponent("¡Hola! Confirmo mi cita agendada en Nails Finder 😊");
+    const whatsappUrl = whatsappNumber ? `https://wa.me/${whatsappNumber}?text=${mensaje}` : `https://wa.me/?text=${mensaje}`;
+    if (elements.alertWhatsapp) {
+      elements.alertWhatsapp.href = whatsappUrl;
+    }
+    elements.alertOverlay.classList.remove("hidden");
+    elements.alertOverlay.setAttribute("aria-hidden", "false");
+    elements.body.style.overflow = "hidden";
+  }
+
+  function cerrarAlertaReserva() {
+    if (!elements.alertOverlay) return;
+    elements.alertOverlay.classList.add("hidden");
+    elements.alertOverlay.setAttribute("aria-hidden", "true");
+    elements.body.style.overflow = "";
   }
 
   if (elements.modalClienteInput) {
@@ -308,6 +331,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       alert("Reserva creada con éxito. ¡Te contactaremos pronto!");
       cerrarModal();
+      mostrarAlertaReserva(profesionalActual?.usuarios?.telefono);
     } catch (error) {
       console.error(error);
       alert(error.message || "Ocurrió un error al crear la reserva. Intenta nuevamente.");
@@ -514,6 +538,12 @@ document.addEventListener("DOMContentLoaded", () => {
     event.stopPropagation();
     updateLightboxIndex(lightboxState.index + 1);
   });
+  elements.alertCloseBtn?.addEventListener("click", cerrarAlertaReserva);
+  elements.alertOverlay?.addEventListener("click", (event) => {
+    if (event.target === elements.alertOverlay) {
+      cerrarAlertaReserva();
+    }
+  });
   lightboxCloseElements?.forEach((btn) => btn.addEventListener("click", cerrarLightbox));
   elements.lightbox?.addEventListener("click", (event) => {
     if (event.target === elements.lightbox) {
@@ -530,6 +560,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     if (event.key === "ArrowLeft") {
       updateLightboxIndex(lightboxState.index - 1);
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && elements.alertOverlay && !elements.alertOverlay.classList.contains("hidden")) {
+      cerrarAlertaReserva();
     }
   });
 
