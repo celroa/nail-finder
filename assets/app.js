@@ -70,6 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
   ];
 
   let profesionalActual = null;
+  let usuarioAutenticado = false;
 
   if (elements.yearSpan) {
     elements.yearSpan.textContent = new Date().getFullYear();
@@ -111,6 +112,18 @@ document.addEventListener("DOMContentLoaded", () => {
     elements.body.style.overflow = "";
   }
 
+  function solicitarInicioSesion() {
+    const contenido = `
+      <p>Para ver el perfil completo de nuestras manicuristas debes iniciar sesión.</p>
+      <button type="button" class="btn-contratar" data-info-login>Iniciar sesión</button>
+    `;
+    abrirModalInformativo("Inicia sesión para continuar", contenido);
+    elements.infoContenido?.querySelector("[data-info-login]")?.addEventListener("click", () => {
+      cerrarModalInformativo();
+      handleLogin();
+    });
+  }
+
   if (elements.modalClienteInput) {
     elements.modalClienteInput.value = CLIENTE_ID;
   }
@@ -118,6 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
   elements.searchForm?.addEventListener("submit", (event) => event.preventDefault());
 
   function renderAuth(user) {
+    usuarioAutenticado = Boolean(user);
     if (!elements.btnLogin || !elements.btnLogout || !elements.authGreeting) return;
     if (user) {
       const displayName = user.user_metadata?.full_name || user.email || "usuario";
@@ -128,6 +142,10 @@ document.addEventListener("DOMContentLoaded", () => {
       elements.authGreeting.textContent = "";
       elements.btnLogin.classList.remove("hidden");
       elements.btnLogout.classList.add("hidden");
+      if (elements.vistaDetalle && !elements.vistaDetalle.classList.contains("hidden")) {
+        volverListado();
+      }
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   }
 
@@ -150,6 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
       renderAuth(null);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (error) {
       alert(error.message);
     }
@@ -167,6 +186,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function abrirModal() {
+    if (!usuarioAutenticado) {
+      solicitarInicioSesion();
+      return;
+    }
     if (!profesionalActual || !elements.modalOverlay) return;
     elements.modalOverlay.classList.remove("hidden");
     elements.modalOverlay.setAttribute("aria-hidden", "false");
@@ -421,6 +444,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   async function verDetalle(id) {
+    if (!usuarioAutenticado) {
+      solicitarInicioSesion();
+      return;
+    }
     if (!elements.vistaListado || !elements.vistaDetalle) return;
 
     elements.vistaListado.classList.add("hidden");
@@ -511,14 +538,14 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
         elements.profTrabajos.appendChild(card);
       });
-    elements.profTrabajos.querySelectorAll(".thumb img").forEach((img) => {
-      img.addEventListener("click", (event) => {
-        event.stopPropagation();
-        const extras = obtenerImagenesExtra(img.src);
-        abrirLightbox(img.src, img.alt, extras);
+      elements.profTrabajos.querySelectorAll(".thumb img").forEach((img) => {
+        img.addEventListener("click", (event) => {
+          event.stopPropagation();
+          const extras = obtenerImagenesExtra(img.src);
+          abrirLightbox(img.src, img.alt, extras);
+        });
       });
-    });
-  }
+    }
 
     profesionalActual = profesional;
     if (elements.modalProfesionalInput) {
@@ -528,6 +555,7 @@ document.addEventListener("DOMContentLoaded", () => {
       elements.modalTitle.textContent = `Agendar cita con ${profesional.usuarios.nombre}`;
     }
     poblarServicios(profesional);
+
   }
 
   function volverListado() {
