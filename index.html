@@ -19,7 +19,7 @@
       </a>
       <nav class="menu" aria-label="principal">
         <a href="#top" data-nav-home>Inicio</a>
-        <a href="#" data-open-contact>Contacto</a>
+        <a href="#contacto-modal" data-nav-contacto>Contacto</a>
       </nav>
       <div class="auth-controls">
         <span id="auth-greeting" class="auth-greeting" aria-live="polite"></span>
@@ -98,6 +98,33 @@
     </div>
   </main>
 
+  <div id="contacto-modal" class="contact-overlay hidden" aria-hidden="true">
+    <div class="contact-dialog contact-content" role="dialog" aria-modal="true" aria-labelledby="contacto-titulo">
+      <button type="button" class="contact-close" data-contact-close aria-label="Cerrar contacto">&times;</button>
+      <h2 id="contacto-titulo" class="section-title">Contacto</h2>
+      <p class="contact-description">¿Quieres impulsar tu emprendimiento o tienes dudas sobre Nails Finder? Escríbenos y te responderemos cuanto antes.</p>
+      <form id="contact-form" class="contact-form">
+        <div class="field">
+          <label for="contact-nombre">Nombre</label>
+          <input id="contact-nombre" name="nombre" type="text" placeholder="Tu nombre" required/>
+        </div>
+        <div class="field">
+          <label for="contact-email">Correo electrónico</label>
+          <input id="contact-email" name="email" type="email" placeholder="tu@email.com" required/>
+        </div>
+        <div class="field">
+          <label for="contact-mensaje">Mensaje</label>
+          <textarea id="contact-mensaje" name="mensaje" rows="4" placeholder="Cuéntanos cómo podemos ayudarte" required></textarea>
+        </div>
+        <button type="submit" class="btn-contratar">Enviar mensaje</button>
+      </form>
+      <div id="contact-feedback" class="contact-feedback hidden" role="status" aria-live="polite">
+        <p id="contact-feedback-message"></p>
+        <a id="contact-whatsapp-link" class="btn-secondary" href="#" target="_blank" rel="noopener">Abrir WhatsApp</a>
+      </div>
+    </div>
+  </div>
+
   <div id="lightbox" class="lightbox hidden" aria-hidden="true">
     <div class="lightbox-backdrop" data-lightbox-close></div>
     <div class="lightbox-content" role="dialog" aria-modal="true" aria-label="Vista ampliada de la imagen">
@@ -132,38 +159,6 @@
       <div id="info-contenido" class="info-body"></div>
       <div class="info-actions">
         <button type="button" class="btn-secondary" data-info-close>Cerrar</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="contacto-overlay" class="contact-overlay hidden" aria-hidden="true">
-    <div class="contact-dialog" role="dialog" aria-modal="true" aria-labelledby="contacto-titulo">
-      <button type="button" class="contact-close" aria-label="Cerrar formulario" data-contact-close>&times;</button>
-      <h3 id="contacto-titulo">Contáctanos</h3>
-      <p class="contact-intro">Déjanos tus datos y te responderemos lo antes posible.</p>
-      <form id="contacto-form" class="contact-form">
-        <label>
-          Nombre completo
-          <input type="text" name="nombre" required/>
-        </label>
-        <label>
-          Correo electrónico
-          <input type="email" name="correo" required/>
-        </label>
-        <label>
-          Mensaje
-          <textarea name="mensaje" rows="4" required placeholder="Cuéntanos en qué podemos ayudarte"></textarea>
-        </label>
-        <div class="contact-actions">
-          <button type="button" class="btn-secondary" data-contact-close>Cancelar</button>
-          <button type="submit" class="btn-contratar">Enviar mensaje</button>
-        </div>
-      </form>
-      <div id="contacto-exito" class="contact-success hidden">
-        <div class="contact-icon">💬</div>
-        <p id="contacto-resumen"></p>
-        <a id="contacto-whatsapp" class="btn-contratar" href="#" target="_blank" rel="noopener">Contactar por WhatsApp</a>
-        <button type="button" class="btn-secondary" data-contact-close>Cerrar</button>
       </div>
     </div>
   </div>

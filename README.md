@@ -25,7 +25,6 @@ Aplicación web enfocada en conectar clientes con profesionales de manicura, per
 - Inicio de sesión con Google usando Supabase Auth y saludo personalizado en la navegación.
 - Lightbox para ampliar las fotografías de trabajos realizados o imágenes de profesionales.
 - Modales informativos para "Sobre nosotros" y "Términos" en el pie de página, más una alerta de confirmación al agendar.
-- Formulario de contacto con confirmación y acceso directo a WhatsApp.
 
 ---
 
@@ -77,7 +76,6 @@ Proyecto Nails Finder/
 5. **Ampliar imágenes:** haz clic en cualquier fotografía de profesional o trabajo para verla en grande; usa el botón de cierre o la tecla `Escape` para volver.
 6. **Consultar información institucional:** en el pie de página, “Sobre nosotros” y “Términos” despliegan modales con información relevante, e “Instagram” abre el perfil oficial.
 7. **Agendar cita:** pulsa “Contratar ahora” para abrir el modal, completa los datos requeridos (el ID de cliente se muestra bloqueado), selecciona el estado y envía la reserva. Se mostrará una alerta con opciones para cerrar o contactar a la manicurista por WhatsApp.
-8. **Escribir al equipo:** desde el menú superior, “Contacto” abre un formulario para enviar tu mensaje; al enviarlo se muestra un saludo y un enlace directo a WhatsApp.
 
 ---
 
