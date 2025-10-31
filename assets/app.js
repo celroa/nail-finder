@@ -46,6 +46,13 @@ document.addEventListener("DOMContentLoaded", () => {
     navHome: document.querySelector("[data-nav-home]"),
     triggerSobre: document.querySelector("[data-modal-sobre]"),
     triggerTerminos: document.querySelector("[data-modal-terminos]"),
+    contactOverlay: document.getElementById("contacto-overlay"),
+    contactForm: document.getElementById("contacto-form"),
+    contactSuccess: document.getElementById("contacto-exito"),
+    contactSummary: document.getElementById("contacto-resumen"),
+    contactWhatsapp: document.getElementById("contacto-whatsapp"),
+    contactOpen: document.querySelector("[data-open-contact]"),
+    contactCloseBtns: document.querySelectorAll("[data-contact-close]"),
   };
 
   const modalCloseBtn = elements.modalOverlay?.querySelector(".modal-close");
@@ -110,6 +117,35 @@ document.addEventListener("DOMContentLoaded", () => {
     elements.infoOverlay.classList.add("hidden");
     elements.infoOverlay.setAttribute("aria-hidden", "true");
     elements.body.style.overflow = "";
+  }
+
+  function abrirContacto() {
+    if (!elements.contactOverlay || !elements.contactForm || !elements.contactSuccess) return;
+    elements.contactForm.reset();
+    elements.contactForm.classList.remove("hidden");
+    elements.contactSuccess.classList.add("hidden");
+    elements.contactOverlay.classList.remove("hidden");
+    elements.contactOverlay.setAttribute("aria-hidden", "false");
+    elements.body.style.overflow = "hidden";
+  }
+
+  function cerrarContacto() {
+    if (!elements.contactOverlay) return;
+    elements.contactOverlay.classList.add("hidden");
+    elements.contactOverlay.setAttribute("aria-hidden", "true");
+    elements.body.style.overflow = "";
+  }
+
+  function mostrarExitoContacto(datos) {
+    if (!elements.contactForm || !elements.contactSuccess || !elements.contactSummary || !elements.contactWhatsapp) return;
+    const { nombre, mensaje } = datos;
+    const preview = nombre ? `Gracias ${nombre}, te responderemos muy pronto.` : "Gracias por escribirnos, te responderemos muy pronto.";
+    elements.contactSummary.textContent = preview;
+    const whatsappNumber = "50212345678";
+    const texto = encodeURIComponent(`Hola, soy ${nombre || "un cliente"} y quisiera más información. Mensaje: ${mensaje}`);
+    elements.contactWhatsapp.href = `https://wa.me/${whatsappNumber}?text=${texto}`;
+    elements.contactForm.classList.add("hidden");
+    elements.contactSuccess.classList.remove("hidden");
   }
 
   function solicitarInicioSesion() {
@@ -603,6 +639,24 @@ document.addEventListener("DOMContentLoaded", () => {
       cerrarModalInformativo();
     }
   });
+  elements.contactOpen?.addEventListener("click", (event) => {
+    event.preventDefault();
+    abrirContacto();
+  });
+  elements.contactCloseBtns?.forEach((btn) => btn.addEventListener("click", cerrarContacto));
+  elements.contactOverlay?.addEventListener("click", (event) => {
+    if (event.target === elements.contactOverlay) {
+      cerrarContacto();
+    }
+  });
+  elements.contactForm?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const formData = new FormData(elements.contactForm);
+    mostrarExitoContacto({
+      nombre: formData.get("nombre")?.toString().trim() ?? "",
+      mensaje: formData.get("mensaje")?.toString().trim() ?? "",
+    });
+  });
   lightboxCloseElements?.forEach((btn) => btn.addEventListener("click", cerrarLightbox));
   elements.lightbox?.addEventListener("click", (event) => {
     if (event.target === elements.lightbox) {
@@ -630,6 +684,11 @@ document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape" && elements.infoOverlay && !elements.infoOverlay.classList.contains("hidden")) {
       cerrarModalInformativo();
+    }
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && elements.contactOverlay && !elements.contactOverlay.classList.contains("hidden")) {
+      cerrarContacto();
     }
   });
 
