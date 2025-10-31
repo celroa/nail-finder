@@ -31,8 +31,11 @@ document.addEventListener("DOMContentLoaded", () => {
     modalClienteInput: document.getElementById("modal-cliente-id"),
     modalTitle: document.getElementById("modal-title"),
     lightbox: document.getElementById("lightbox"),
-    lightboxImage: document.getElementById("lightbox-image"),
     lightboxCaption: document.getElementById("lightbox-caption"),
+    lightboxTrack: document.querySelector(".lightbox-track"),
+    lightboxDots: document.querySelector(".lightbox-dots"),
+    lightboxPrev: document.querySelector(".lightbox-nav.prev"),
+    lightboxNext: document.querySelector(".lightbox-nav.next"),
   };
 
   const modalCloseBtn = elements.modalOverlay?.querySelector(".modal-close");
@@ -44,6 +47,16 @@ document.addEventListener("DOMContentLoaded", () => {
     "./public/static/images/image1.jpg",
     "./public/static/images/image2.png",
     "./public/static/images/image3.jpg",
+  ];
+  const galeriaPlaceholderUñas = [
+    "https://images.pexels.com/photos/939835/pexels-photo-939835.jpeg?auto=compress&cs=tinysrgb&w=1080&h=720&dpr=1",
+    "https://i.pinimg.com/736x/f6/70/b2/f670b23472fa411cc1f59a5db8efc9c6.jpg",
+    "https://m.media-amazon.com/images/I/71b744JrZiL._AC_UF1000,1000_QL80_.jpg",
+    "https://i.pinimg.com/564x/0f/cc/35/0fcc35bf94ea6e441e6ca5f63be047c3.jpg",
+    "https://i.pinimg.com/736x/4f/c7/b0/4fc7b05a957235bfc3719c7603a7a65f.jpg",
+    "https://i.pinimg.com/564x/cf/87/e9/cf87e902036ddea5e3c402ef65a820f2.jpg",
+    "https://bucket.somosohlala.com.ar/s3fs-public/styles/internal_480/public/2025-05/3b29d774b5cba7c6d5d2fd791db6641f.jpg.webp?itok=sHs7lBRh",
+    "https://album.mediaset.es/eimg/2024/03/27/divinity-portada-1_b7ae.jpg?w=1200"
   ];
 
   let profesionalActual = null;
@@ -121,14 +134,89 @@ document.addEventListener("DOMContentLoaded", () => {
     poblarServicios(profesionalActual);
   }
 
-  function abrirLightbox(src, caption = "") {
-    if (!elements.lightbox || !elements.lightboxImage) return;
-    elements.lightboxImage.src = src;
-    elements.lightboxImage.alt = caption || "Imagen ampliada";
-    if (elements.lightboxCaption) {
-      elements.lightboxCaption.textContent = caption;
-      elements.lightboxCaption.classList.toggle("hidden", !caption);
+  let lightboxState = {
+    images: [],
+    index: 0,
+  };
+
+  function renderLightbox() {
+    const { images, index } = lightboxState;
+    if (!elements.lightboxTrack) return;
+
+    elements.lightboxTrack.innerHTML = images
+      .map(
+        (img, idx) => `
+          <div class="lightbox-slide${idx === index ? " is-active" : ""}">
+            <img src="${img.url}" alt="${img.caption || "Trabajo realizado"}">
+          </div>
+        `
+      )
+      .join("");
+
+    if (elements.lightboxDots) {
+      elements.lightboxDots.innerHTML = images
+        .map(
+          (_, idx) =>
+            `<button type="button" class="lightbox-dot${idx === index ? " is-active" : ""}" aria-label="Ir a la imagen ${idx + 1}" data-lightbox-dot="${idx}"></button>`
+        )
+        .join("");
+
+      elements.lightboxDots.querySelectorAll(".lightbox-dot").forEach((dot) => {
+        dot.addEventListener("click", () => {
+          const target = Number(dot.dataset.lightboxDot);
+          updateLightboxIndex(target);
+        });
+      });
     }
+
+    elements.lightboxTrack.style.transform = `translateX(-${index * 100}%)`;
+
+    if (elements.lightboxCaption) {
+      const activeImage = images[index];
+      elements.lightboxCaption.textContent = activeImage?.caption || "";
+      elements.lightboxCaption.classList.toggle("hidden", !activeImage?.caption);
+    }
+  }
+
+  function updateLightboxIndex(newIndex) {
+    const { images } = lightboxState;
+    if (!images.length) return;
+    const target = (newIndex + images.length) % images.length;
+    lightboxState.index = target;
+    renderLightbox();
+  }
+
+  function obtenerImagenesExtra(principal) {
+    const pool = galeriaPlaceholderUñas.filter((url) => url !== principal);
+    const max = Math.min(4, pool.length);
+    const seleccion = [];
+    const copia = [...pool];
+    while (seleccion.length < max && copia.length) {
+      const idx = Math.floor(Math.random() * copia.length);
+      seleccion.push(copia.splice(idx, 1)[0]);
+    }
+    return seleccion;
+  }
+
+  function abrirLightbox(src, caption = "", extraImages = []) {
+    if (!elements.lightbox) return;
+
+    const gallery = [
+      { url: src, caption },
+      ...extraImages.map((url) => ({ url, caption })),
+    ].filter((item) => item.url);
+
+    lightboxState = {
+      images: gallery,
+      index: 0,
+    };
+
+    renderLightbox();
+
+    elements.lightboxPrev?.classList.toggle("hidden", gallery.length <= 1);
+    elements.lightboxNext?.classList.toggle("hidden", gallery.length <= 1);
+    elements.lightboxDots?.classList.toggle("hidden", gallery.length <= 1);
+
     elements.lightbox.classList.remove("hidden");
     elements.lightbox.setAttribute("aria-hidden", "false");
     elements.body.style.overflow = "hidden";
@@ -138,10 +226,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!elements.lightbox) return;
     elements.lightbox.classList.add("hidden");
     elements.lightbox.setAttribute("aria-hidden", "true");
-    if (elements.lightboxImage) {
-      elements.lightboxImage.src = "";
-      elements.lightboxImage.alt = "";
-    }
+    lightboxState = { images: [], index: 0 };
+    elements.lightboxTrack && (elements.lightboxTrack.innerHTML = "");
+    elements.lightboxDots && (elements.lightboxDots.innerHTML = "");
+    elements.lightboxPrev?.classList.remove("hidden");
+    elements.lightboxNext?.classList.remove("hidden");
     if (elements.lightboxCaption) {
       elements.lightboxCaption.textContent = "";
       elements.lightboxCaption.classList.remove("hidden");
@@ -375,13 +464,14 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
         elements.profTrabajos.appendChild(card);
       });
-      elements.profTrabajos.querySelectorAll(".thumb img").forEach((img) => {
-        img.addEventListener("click", (event) => {
-          event.stopPropagation();
-          abrirLightbox(img.src, img.alt);
-        });
+    elements.profTrabajos.querySelectorAll(".thumb img").forEach((img) => {
+      img.addEventListener("click", (event) => {
+        event.stopPropagation();
+        const extras = obtenerImagenesExtra(img.src);
+        abrirLightbox(img.src, img.alt, extras);
       });
-    }
+    });
+  }
 
     profesionalActual = profesional;
     if (elements.modalProfesionalInput) {
@@ -416,6 +506,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
   elements.modalForm?.addEventListener("submit", enviarReserva);
+  elements.lightboxPrev?.addEventListener("click", (event) => {
+    event.stopPropagation();
+    updateLightboxIndex(lightboxState.index - 1);
+  });
+  elements.lightboxNext?.addEventListener("click", (event) => {
+    event.stopPropagation();
+    updateLightboxIndex(lightboxState.index + 1);
+  });
   lightboxCloseElements?.forEach((btn) => btn.addEventListener("click", cerrarLightbox));
   elements.lightbox?.addEventListener("click", (event) => {
     if (event.target === elements.lightbox) {
@@ -423,8 +521,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && elements.lightbox && !elements.lightbox.classList.contains("hidden")) {
+    if (!elements.lightbox || elements.lightbox.classList.contains("hidden")) return;
+    if (event.key === "Escape") {
       cerrarLightbox();
+    }
+    if (event.key === "ArrowRight") {
+      updateLightboxIndex(lightboxState.index + 1);
+    }
+    if (event.key === "ArrowLeft") {
+      updateLightboxIndex(lightboxState.index - 1);
     }
   });
 

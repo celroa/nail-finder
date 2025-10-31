@@ -365,6 +365,87 @@ footer{
   padding:1rem;
   box-shadow:0 20px 60px rgba(0,0,0,0.4);
 }
+.lightbox-carousel{
+  position:relative;
+  width:min(80vw, 720px);
+  height:min(70vh, 480px);
+  background:#111;
+  border-radius:1rem;
+  overflow:hidden;
+}
+.lightbox-track{
+  display:flex;
+  width:100%;
+  height:100%;
+  transition:transform .45s ease;
+}
+.lightbox-slide{
+  flex:0 0 100%;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:1rem;
+  opacity:0;
+  transition:opacity .35s ease;
+}
+.lightbox-slide.is-active{
+  opacity:1;
+}
+.lightbox-slide img{
+  max-width:100%;
+  max-height:100%;
+  object-fit:contain;
+  border-radius:.85rem;
+  box-shadow:0 15px 40px rgba(0,0,0,0.45);
+}
+.lightbox-nav{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  width:2.6rem;
+  height:2.6rem;
+  border-radius:999px;
+  border:none;
+  background:rgba(255,255,255,0.85);
+  color:var(--accent);
+  font-size:1.5rem;
+  font-weight:700;
+  cursor:pointer;
+  display:grid;
+  place-items:center;
+  box-shadow:0 12px 25px rgba(0,0,0,0.25);
+  transition:background .2s ease, transform .2s ease;
+  z-index:2;
+}
+.lightbox-nav:hover{
+  background:#fff;
+  transform:translateY(-50%) scale(1.05);
+}
+.lightbox-nav.prev{ left:1rem; }
+.lightbox-nav.next{ right:1rem; }
+.lightbox-dots{
+  position:absolute;
+  bottom:.9rem;
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  gap:.6rem;
+  pointer-events:auto;
+}
+.lightbox-dot{
+  width:.7rem;
+  height:.7rem;
+  border-radius:999px;
+  border:none;
+  background:rgba(255,255,255,0.55);
+  cursor:pointer;
+  transition:background .2s ease, transform .2s ease;
+}
+.lightbox-dot.is-active{
+  background:#fff;
+  transform:scale(1.15);
+}
 .lightbox-content img{
   max-width:100%;
   max-height:70vh;
@@ -375,6 +456,20 @@ footer{
   font-size:1rem;
   color:var(--muted);
   text-align:center;
+}
+.lightbox-action-close{
+  align-self:flex-end;
+  margin-right:.35rem;
+  padding:.55rem 1.15rem;
+  border-radius:.75rem;
+  font-weight:600;
+  border:1px solid rgba(174,99,124,0.5);
+  box-shadow:0 12px 24px rgba(0,0,0,0.1);
+}
+.lightbox-action-close:hover{
+  border-color:var(--accent);
+  color:#fff;
+  background:var(--accent);
 }
 .lightbox-close{
   position:absolute;
