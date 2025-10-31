@@ -18,12 +18,13 @@ Aplicación web enfocada en conectar clientes con profesionales de manicura, per
 
 ## Características principales
 - Listado dinámico de profesionales con datos reales provenientes de funciones de Supabase.
-- Vista de detalle con información de contacto, servicios ofrecidos e imágenes de trabajos previos.
+- Vista de detalle (tras iniciar sesión) con información de contacto, servicios ofrecidos e imágenes de trabajos previos.
 - Modal de reserva para solicitar citas con envío directo al endpoint de Supabase.
 - Asociación única de imágenes locales a cada card de profesional para evitar repeticiones.
 - Enlace directo al perfil de Instagram de cada profesional.
 - Inicio de sesión con Google usando Supabase Auth y saludo personalizado en la navegación.
 - Lightbox para ampliar las fotografías de trabajos realizados o imágenes de profesionales.
+- Modales informativos para "Sobre nosotros" y "Términos" en el pie de página, más una alerta de confirmación al agendar.
 
 ---
 
@@ -69,11 +70,12 @@ Proyecto Nails Finder/
 
 ## Uso de la aplicación
 1. **Explorar profesionales:** al cargar la página se muestran cards con información general y una imagen asignada de forma única.
-2. **Ver detalle:** haz clic en una card o en el botón “Contratar” para abrir la vista de detalles del profesional.
-3. **Visitar Instagram:** utiliza el botón “Visitar Instagram” para abrir la red social en una pestaña nueva.
-4. **Iniciar sesión con Google:** desde la barra de navegación pulsa “Inicia sesión con Google”. Una vez autenticado, verás un saludo y tendrás disponible el botón de “Cerrar sesión”.
+2. **Iniciar sesión con Google:** desde la barra superior pulsa “Inicia sesión con Google”. Una vez autenticado, verás un saludo y tendrás disponible el botón de “Cerrar sesión”.
+3. **Ver detalle:** después de iniciar sesión haz clic en una card o en el botón “Contratar” para abrir la vista de detalles del profesional.
+4. **Visitar Instagram:** usa el botón “Visitar Instagram” dentro del detalle para abrir la red social en una pestaña nueva.
 5. **Ampliar imágenes:** haz clic en cualquier fotografía de profesional o trabajo para verla en grande; usa el botón de cierre o la tecla `Escape` para volver.
-6. **Agendar cita:** pulsa “Contratar ahora” para abrir el modal, completa los datos requeridos y envía la reserva. Se mostrará una alerta informando el resultado de la operación.
+6. **Consultar información institucional:** en el pie de página, “Sobre nosotros” y “Términos” despliegan modales con información relevante, e “Instagram” abre el perfil oficial.
+7. **Agendar cita:** pulsa “Contratar ahora” para abrir el modal, completa los datos requeridos (el ID de cliente se muestra bloqueado), selecciona el estado y envía la reserva. Se mostrará una alerta con opciones para cerrar o contactar a la manicurista por WhatsApp.
 
 ---
 
