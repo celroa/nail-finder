@@ -18,8 +18,7 @@
         <span>Nails Finder</span>
       </a>
       <nav class="menu" aria-label="principal">
-        <a href="#">Inicio</a>
-        <a href="#">Contacto</a>
+        <a href="#top" data-nav-home>Inicio</a>
       </nav>
       <div class="auth-controls">
         <span id="auth-greeting" class="auth-greeting" aria-live="polite"></span>
@@ -115,7 +114,7 @@
 
   <div id="alerta-reserva" class="alert-overlay hidden" aria-hidden="true">
     <div class="alert-dialog" role="alertdialog" aria-modal="true" aria-labelledby="alerta-titulo" aria-describedby="alerta-mensaje">
-      <div class="alert-icon"></div>
+      <div class="alert-icon">💅</div>
       <h3 id="alerta-titulo">¡Reserva confirmada!</h3>
       <p id="alerta-mensaje">Gracias por agendar tu cita por medio de Nails Finder, pronto tu manicurista se pondrá en contacto contigo.</p>
       <div class="alert-actions">
@@ -125,16 +124,25 @@
     </div>
   </div>
 
+  <div id="modal-informacion" class="info-overlay hidden" aria-hidden="true">
+    <div class="info-dialog" role="dialog" aria-modal="true" aria-labelledby="info-titulo">
+      <button type="button" class="info-close" aria-label="Cerrar" data-info-close>&times;</button>
+      <h3 id="info-titulo"></h3>
+      <div id="info-contenido" class="info-body"></div>
+      <div class="info-actions">
+        <button type="button" class="btn-secondary" data-info-close>Cerrar</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Footer -->
   <footer>
     <div class="wrapper footer-grid">
       <div>© <span id="yy"></span> Nails Finder — Todos los derechos reservados.</div>
       <div class="links">
-        <a href="#">Sobre nosotros</a>
-        <a href="#">Privacidad</a>
-        <a href="#">Términos</a>
-        <a href="#">Instagram</a>
-        <a href="#">Facebook</a>
+        <a href="#" data-modal-sobre>Sobre nosotros</a>
+        <a href="#" data-modal-terminos>Términos</a>
+        <a href="https://www.instagram.com/anny_nails_studio_?igsh=OXcwazJsenVxMDRs" target="_blank" rel="noopener">Instagram</a>
       </div>
     </div>
   </footer>

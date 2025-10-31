@@ -39,6 +39,13 @@ document.addEventListener("DOMContentLoaded", () => {
     alertOverlay: document.getElementById("alerta-reserva"),
     alertCloseBtn: document.querySelector("[data-alert-close]"),
     alertWhatsapp: document.getElementById("alerta-whatsapp"),
+    infoOverlay: document.getElementById("modal-informacion"),
+    infoCloseBtns: document.querySelectorAll("[data-info-close]"),
+    infoTitulo: document.getElementById("info-titulo"),
+    infoContenido: document.getElementById("info-contenido"),
+    navHome: document.querySelector("[data-nav-home]"),
+    triggerSobre: document.querySelector("[data-modal-sobre]"),
+    triggerTerminos: document.querySelector("[data-modal-terminos]"),
   };
 
   const modalCloseBtn = elements.modalOverlay?.querySelector(".modal-close");
@@ -85,6 +92,22 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!elements.alertOverlay) return;
     elements.alertOverlay.classList.add("hidden");
     elements.alertOverlay.setAttribute("aria-hidden", "true");
+    elements.body.style.overflow = "";
+  }
+
+  function abrirModalInformativo(titulo, htmlContenido) {
+    if (!elements.infoOverlay || !elements.infoTitulo || !elements.infoContenido) return;
+    elements.infoTitulo.textContent = titulo;
+    elements.infoContenido.innerHTML = htmlContenido;
+    elements.infoOverlay.classList.remove("hidden");
+    elements.infoOverlay.setAttribute("aria-hidden", "false");
+    elements.body.style.overflow = "hidden";
+  }
+
+  function cerrarModalInformativo() {
+    if (!elements.infoOverlay) return;
+    elements.infoOverlay.classList.add("hidden");
+    elements.infoOverlay.setAttribute("aria-hidden", "true");
     elements.body.style.overflow = "";
   }
 
@@ -544,6 +567,12 @@ document.addEventListener("DOMContentLoaded", () => {
       cerrarAlertaReserva();
     }
   });
+  elements.infoCloseBtns?.forEach((btn) => btn.addEventListener("click", cerrarModalInformativo));
+  elements.infoOverlay?.addEventListener("click", (event) => {
+    if (event.target === elements.infoOverlay) {
+      cerrarModalInformativo();
+    }
+  });
   lightboxCloseElements?.forEach((btn) => btn.addEventListener("click", cerrarLightbox));
   elements.lightbox?.addEventListener("click", (event) => {
     if (event.target === elements.lightbox) {
@@ -568,6 +597,11 @@ document.addEventListener("DOMContentLoaded", () => {
       cerrarAlertaReserva();
     }
   });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && elements.infoOverlay && !elements.infoOverlay.classList.contains("hidden")) {
+      cerrarModalInformativo();
+    }
+  });
 
   (async () => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -577,6 +611,48 @@ document.addEventListener("DOMContentLoaded", () => {
   supabase.auth.onAuthStateChange((_event, session) => {
     renderAuth(session?.user ?? null);
   });
+
+  if (elements.navHome) {
+    elements.navHome.addEventListener("click", (event) => {
+      event.preventDefault();
+      cerrarModalInformativo();
+      cerrarAlertaReserva();
+      cerrarLightbox();
+      cerrarModal();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      if (elements.vistaDetalle && !elements.vistaDetalle.classList.contains("hidden")) {
+        volverListado();
+      }
+    });
+  }
+
+  if (elements.triggerSobre) {
+    elements.triggerSobre.addEventListener("click", (event) => {
+      event.preventDefault();
+      const contenido = `
+        <p>Nails Finder es una plataforma que conecta a amantes del cuidado de manos con talentosas manicuristas independientes en su ciudad.</p>
+        <p>Nuestro objetivo es visibilizar el trabajo de emprendedoras, facilitar el descubrimiento de nuevos estilos y permitir reservas rápidas y seguras.</p>
+        <p>Creemos en el empoderamiento a través de la creatividad y la confianza que brindan unas uñas cuidadas.</p>
+      `;
+      abrirModalInformativo("Sobre Nails Finder", contenido);
+    });
+  }
+
+  if (elements.triggerTerminos) {
+    elements.triggerTerminos.addEventListener("click", (event) => {
+      event.preventDefault();
+      const contenido = `
+        <p>Al utilizar Nails Finder aceptas:</p>
+        <ul>
+          <li>Reservar citas de forma responsable y notificar cancelaciones con antelación.</li>
+          <li>Brindar información verídica para facilitar el contacto con tu manicurista.</li>
+          <li>Respetar las tarifas y políticas individuales de cada profesional.</li>
+        </ul>
+        <p>Nails Finder actúa como intermediario, por lo que los acuerdos finales se realizan directamente entre cliente y manicurista.</p>
+      `;
+      abrirModalInformativo("Términos y condiciones", contenido);
+    });
+  }
 
   cargarProfesionales();
 });

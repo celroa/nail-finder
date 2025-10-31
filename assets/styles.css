@@ -547,6 +547,62 @@ footer{
   box-shadow:0 15px 30px rgba(174,99,124,0.35);
   min-width:200px;
 }
+.info-overlay{
+  position:fixed;
+  inset:0;
+  display:grid;
+  place-items:center;
+  background:rgba(0,0,0,0.55);
+  z-index:1350;
+  padding:1.5rem;
+}
+.info-dialog{
+  width:min(520px, 100%);
+  max-height:90vh;
+  overflow:auto;
+  background:linear-gradient(180deg, #ffffff 35%, rgba(255,202,225,0.7) 95%);
+  border-radius:1.75rem;
+  padding:2rem 2.4rem;
+  box-shadow:0 45px 90px rgba(0,0,0,0.3);
+  border:1px solid rgba(224,136,168,0.45);
+  position:relative;
+  display:grid;
+  gap:1.25rem;
+}
+.info-dialog h3{
+  margin:0;
+  font-size:1.6rem;
+  color:var(--accent);
+}
+.info-body{
+  color:var(--muted);
+  font-size:1rem;
+  line-height:1.7;
+  display:grid;
+  gap:1rem;
+}
+.info-close{
+  position:absolute;
+  top:1.1rem;
+  right:1.2rem;
+  border:none;
+  background:rgba(0,0,0,0.65);
+  color:#fff;
+  width:2.3rem;
+  height:2.3rem;
+  border-radius:999px;
+  font-size:1.7rem;
+  display:grid;
+  place-items:center;
+  cursor:pointer;
+}
+.info-close:hover{
+  background:rgba(0,0,0,0.85);
+}
+.info-actions{
+  display:flex;
+  justify-content:flex-end;
+}
 .sr-only{
   position:absolute;
   width:1px;
