@@ -126,6 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (elements.modalClienteInput) {
     elements.modalClienteInput.value = CLIENTE_ID;
+    elements.modalClienteInput.readOnly = true;
   }
 
   elements.searchForm?.addEventListener("submit", (event) => event.preventDefault());
@@ -317,6 +318,7 @@ document.addEventListener("DOMContentLoaded", () => {
     elements.modalForm?.reset();
     if (elements.modalClienteInput) {
       elements.modalClienteInput.value = CLIENTE_ID;
+      elements.modalClienteInput.readOnly = true;
     }
     if (profesionalActual) {
       poblarServicios(profesionalActual);

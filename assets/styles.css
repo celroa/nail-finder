@@ -319,6 +319,11 @@ main{ padding:2rem 0 3rem }
   font-family:inherit;
   resize:vertical;
 }
+.input-readonly{
+  background:#f1f1f5;
+  color:#69636d;
+  cursor:not-allowed;
+}
 .modal-actions{
   display:flex;
   gap:.75rem;
