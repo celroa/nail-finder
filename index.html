@@ -19,7 +19,7 @@
       </a>
       <nav class="menu" aria-label="principal">
         <a href="#top" data-nav-home>Inicio</a>
-        <a href="#contacto-modal" data-nav-contacto>Contacto</a>
+        <button type="button" class="btn-contacto" aria-label="Contacto">Contacto</button>
       </nav>
       <div class="auth-controls">
         <span id="auth-greeting" class="auth-greeting" aria-live="polite"></span>
@@ -97,33 +97,6 @@
       </div>
     </div>
   </main>
-
-  <div id="contacto-modal" class="contact-overlay hidden" aria-hidden="true">
-    <div class="contact-dialog contact-content" role="dialog" aria-modal="true" aria-labelledby="contacto-titulo">
-      <button type="button" class="contact-close" data-contact-close aria-label="Cerrar contacto">&times;</button>
-      <h2 id="contacto-titulo" class="section-title">Contacto</h2>
-      <p class="contact-description">¿Quieres impulsar tu emprendimiento o tienes dudas sobre Nails Finder? Escríbenos y te responderemos cuanto antes.</p>
-      <form id="contact-form" class="contact-form">
-        <div class="field">
-          <label for="contact-nombre">Nombre</label>
-          <input id="contact-nombre" name="nombre" type="text" placeholder="Tu nombre" required/>
-        </div>
-        <div class="field">
-          <label for="contact-email">Correo electrónico</label>
-          <input id="contact-email" name="email" type="email" placeholder="tu@email.com" required/>
-        </div>
-        <div class="field">
-          <label for="contact-mensaje">Mensaje</label>
-          <textarea id="contact-mensaje" name="mensaje" rows="4" placeholder="Cuéntanos cómo podemos ayudarte" required></textarea>
-        </div>
-        <button type="submit" class="btn-contratar">Enviar mensaje</button>
-      </form>
-      <div id="contact-feedback" class="contact-feedback hidden" role="status" aria-live="polite">
-        <p id="contact-feedback-message"></p>
-        <a id="contact-whatsapp-link" class="btn-secondary" href="#" target="_blank" rel="noopener">Abrir WhatsApp</a>
-      </div>
-    </div>
-  </div>
 
   <div id="lightbox" class="lightbox hidden" aria-hidden="true">
     <div class="lightbox-backdrop" data-lightbox-close></div>

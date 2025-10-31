@@ -44,15 +44,6 @@ document.addEventListener("DOMContentLoaded", () => {
     infoTitulo: document.getElementById("info-titulo"),
     infoContenido: document.getElementById("info-contenido"),
     navHome: document.querySelector("[data-nav-home]"),
-    navContact: document.querySelector("[data-nav-contacto]"),
-    contactOverlay: document.getElementById("contacto-modal"),
-    contactCloseBtns: document.querySelectorAll("[data-contact-close]"),
-    contactDialog: document.querySelector(".contact-dialog"),
-    contactForm: document.getElementById("contact-form"),
-    contactFeedback: document.getElementById("contact-feedback"),
-    contactFeedbackMessage: document.getElementById("contact-feedback-message"),
-    contactWhatsappLink: document.getElementById("contact-whatsapp-link"),
-    contactNameInput: document.getElementById("contact-nombre"),
     triggerSobre: document.querySelector("[data-modal-sobre]"),
     triggerTerminos: document.querySelector("[data-modal-terminos]"),
   };
@@ -575,72 +566,6 @@ document.addEventListener("DOMContentLoaded", () => {
     elements.vistaListado.classList.remove("hidden");
   }
 
-  function resetContactoEstado({ resetForm = false } = {}) {
-    if (resetForm && elements.contactForm) {
-      elements.contactForm.reset();
-    }
-    if (elements.contactFeedback) {
-      elements.contactFeedback.classList.add("hidden");
-    }
-    if (elements.contactFeedbackMessage) {
-      elements.contactFeedbackMessage.textContent = "";
-    }
-    if (elements.contactWhatsappLink) {
-      elements.contactWhatsappLink.href = "#";
-    }
-  }
-
-  function abrirModalContacto() {
-    if (!elements.contactOverlay) return;
-    resetContactoEstado({ resetForm: true });
-    elements.contactOverlay.classList.remove("hidden");
-    elements.contactOverlay.setAttribute("aria-hidden", "false");
-    elements.body.style.overflow = "hidden";
-    elements.contactDialog?.scrollTo({ top: 0 });
-    requestAnimationFrame(() => {
-      elements.contactNameInput?.focus();
-    });
-  }
-
-  function cerrarModalContacto() {
-    if (!elements.contactOverlay) return;
-    const estabaVisible = !elements.contactOverlay.classList.contains("hidden");
-    if (estabaVisible) {
-      elements.contactOverlay.classList.add("hidden");
-      elements.contactOverlay.setAttribute("aria-hidden", "true");
-      elements.body.style.overflow = "";
-    }
-    resetContactoEstado({ resetForm: estabaVisible });
-  }
-
-  function handleContactSubmit(event) {
-    event.preventDefault();
-    if (!elements.contactForm || !elements.contactFeedback || !elements.contactFeedbackMessage || !elements.contactWhatsappLink) {
-      return;
-    }
-
-    const formData = new FormData(elements.contactForm);
-    const nombre = formData.get("nombre")?.toString().trim() ?? "";
-    const email = formData.get("email")?.toString().trim() ?? "";
-    const mensaje = formData.get("mensaje")?.toString().trim() ?? "";
-
-    const saludo = nombre ? `¡Hola ${nombre}!` : "¡Hola!";
-    const intro = nombre ? `Hola, soy ${nombre}` : "Hola, estoy interesada/o en Nails Finder";
-    const emailTexto = email ? ` (correo: ${email})` : "";
-    const cuerpoMensaje = mensaje || "Quisiera obtener más información sobre Nails Finder.";
-    const whatsappMensaje = `${intro}${emailTexto}. ${cuerpoMensaje}`;
-    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(whatsappMensaje)}`;
-
-    elements.contactFeedbackMessage.textContent = `${saludo} Gracias por escribirnos. En breve nos pondremos en contacto. También puedes hablar con nosotros directamente por WhatsApp.`;
-    elements.contactWhatsappLink.href = whatsappUrl;
-    elements.contactFeedback.classList.remove("hidden");
-    elements.contactDialog?.scrollTo({
-      top: elements.contactDialog.scrollHeight,
-      behavior: "smooth",
-    });
-    elements.contactForm.reset();
-  }
-
   elements.btnLogin?.addEventListener("click", handleLogin);
   elements.btnLogout?.addEventListener("click", handleLogout);
   elements.btnContratar?.addEventListener("click", abrirModal);
@@ -658,13 +583,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
   elements.modalForm?.addEventListener("submit", enviarReserva);
-  elements.contactForm?.addEventListener("submit", handleContactSubmit);
-  elements.contactCloseBtns?.forEach((btn) => btn.addEventListener("click", cerrarModalContacto));
-  elements.contactOverlay?.addEventListener("click", (event) => {
-    if (event.target === elements.contactOverlay) {
-      cerrarModalContacto();
-    }
-  });
   elements.lightboxPrev?.addEventListener("click", (event) => {
     event.stopPropagation();
     updateLightboxIndex(lightboxState.index - 1);
@@ -714,11 +632,6 @@ document.addEventListener("DOMContentLoaded", () => {
       cerrarModalInformativo();
     }
   });
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && elements.contactOverlay && !elements.contactOverlay.classList.contains("hidden")) {
-      cerrarModalContacto();
-    }
-  });
 
   (async () => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -736,25 +649,10 @@ document.addEventListener("DOMContentLoaded", () => {
       cerrarAlertaReserva();
       cerrarLightbox();
       cerrarModal();
-      cerrarModalContacto();
       window.scrollTo({ top: 0, behavior: "smooth" });
       if (elements.vistaDetalle && !elements.vistaDetalle.classList.contains("hidden")) {
         volverListado();
       }
-    });
-  }
-
-  if (elements.navContact) {
-    elements.navContact.addEventListener("click", (event) => {
-      event.preventDefault();
-      cerrarModalInformativo();
-      cerrarAlertaReserva();
-      cerrarLightbox();
-      cerrarModal();
-      if (elements.vistaDetalle && !elements.vistaDetalle.classList.contains("hidden")) {
-        volverListado();
-      }
-      abrirModalContacto();
     });
   }
 
