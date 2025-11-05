@@ -343,6 +343,53 @@ main{ padding:2rem 0 3rem }
   justify-content:flex-end;
   margin-top:.5rem;
 }
+.form-status{
+  min-height:1.25rem;
+  margin:0;
+  font-size:.95rem;
+  color:#5f5b64;
+}
+.form-status.success{ color:#1b873b }
+.form-status.error{ color:#c53f52 }
+.contact-alt{
+  margin-top:1.5rem;
+  padding-top:1.25rem;
+  border-top:1px dashed rgba(224,136,168,0.6);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+  flex-wrap:wrap;
+}
+.contact-alt span{
+  font-weight:600;
+  color:var(--muted);
+}
+.btn-whatsapp{
+  display:inline-flex;
+  align-items:center;
+  gap:.5rem;
+  padding:.65rem 1.1rem;
+  border-radius:.6rem;
+  background:#25d366;
+  color:#fff;
+  font-weight:600;
+  border:none;
+  cursor:pointer;
+  transition:filter .2s ease, transform .2s ease;
+}
+.btn-whatsapp::before{
+  content:"";
+  width:18px;
+  height:18px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 10.32a9 9 0 1 1-5.32-5.32'%3E%3C/path%3E%3Cline x1='22' y1='2' x2='16' y2='8'%3E%3C/line%3E%3Cpath d='M16.24 12.554a3.5 3.5 0 0 1-4.73 3.714 7.89 7.89 0 0 1-2.82-1.422 7.6 7.6 0 0 1-2.378-2.862 1.3 1.3 0 0 1 .62-1.664l.131-.066a1.3 1.3 0 0 1 1.493.236l.318.318a.91.91 0 0 0 .962.213l.217-.08a.91.91 0 0 1 .98.273l1.029 1.235a.91.91 0 0 0 1.146.227l.332-.166a.91.91 0 0 1 1.26.405l.224.447a.91.91 0 0 1 .074.357Z'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-size:contain;
+}
+.btn-whatsapp:hover{
+  filter:brightness(1.05);
+  transform:translateY(-2px);
+}
 /* Footer */
 footer{
   border-top:1px solid var(--ring);

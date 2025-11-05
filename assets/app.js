@@ -1,4 +1,5 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+import { CONTACT_EMAIL, CONTACT_WHATSAPP, CONTACT_WHATSAPP_MESSAGE } from "./contact-config.js";
 
 const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxhd3RrcmFzZmxwaHZjd3hkbmx3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc2MzY2NDAsImV4cCI6MjA3MzIxMjY0MH0.A18gO8TBTctb-KcN3Nf8n7dEIXQ_WtwuIr5bKUTUizs";
 const CLIENTE_ID = "0825d76a-7fd8-44ef-a9ed-b67a85e6721e";
@@ -6,6 +7,10 @@ const SUPABASE_URL = "https://lawtkrasflphvcwxdnlw.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxhd3RrcmFzZmxwaHZjd3hkbmx3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc2MzY2NDAsImV4cCI6MjA3MzIxMjY0MH0.A18gO8TBTctb-KcN3Nf8n7dEIXQ_WtwuIr5bKUTUizs";
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const FORM_SUBMIT_ENDPOINT = `https://formsubmit.co/ajax/${encodeURIComponent(CONTACT_EMAIL)}`;
+const CONTACT_AUTORESPONSE = "¡Hola! Gracias por escribirnos a Nails Finder. Pronto nos pondremos en contacto contigo para ayudarte con tu solicitud.";
+const WHATSAPP_FALLBACK = "Hola, me gustaría recibir más información.";
+const DEFAULT_WHATSAPP_TEXT = encodeURIComponent(((CONTACT_WHATSAPP_MESSAGE || WHATSAPP_FALLBACK).trim()) || WHATSAPP_FALLBACK);
 
 document.addEventListener("DOMContentLoaded", () => {
   const elements = {
@@ -46,11 +51,23 @@ document.addEventListener("DOMContentLoaded", () => {
     navHome: document.querySelector("[data-nav-home]"),
     triggerSobre: document.querySelector("[data-modal-sobre]"),
     triggerTerminos: document.querySelector("[data-modal-terminos]"),
+    contactButton: document.querySelector(".btn-contacto"),
+    contactOverlay: document.getElementById("modal-contacto"),
+    contactForm: document.getElementById("form-contacto"),
+    contactStatus: document.getElementById("contacto-status"),
+    contactWhatsapp: document.getElementById("contacto-whatsapp"),
   };
 
   const modalCloseBtn = elements.modalOverlay?.querySelector(".modal-close");
   const modalCancelBtn = elements.modalOverlay?.querySelector("[data-modal-cancel]");
   const lightboxCloseElements = elements.lightbox?.querySelectorAll("[data-lightbox-close]");
+  const contactCloseButtons = elements.contactOverlay?.querySelectorAll("[data-contact-close], [data-contact-cancel]");
+
+  if (elements.contactWhatsapp) {
+    const sanitizedWhatsapp = (CONTACT_WHATSAPP || "").toString().replace(/\D+/g, "");
+    const baseWhatsappUrl = sanitizedWhatsapp ? `https://wa.me/${sanitizedWhatsapp}` : "https://wa.me/";
+    elements.contactWhatsapp.href = `${baseWhatsappUrl}?text=${DEFAULT_WHATSAPP_TEXT}`;
+  }
 
   const servicioPlaceholder = '<option value="">Selecciona un servicio</option>';
   const imagenesBase = [
@@ -333,6 +350,101 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  function setContactStatus(message = "", state = "") {
+    if (!elements.contactStatus) return;
+    elements.contactStatus.textContent = message;
+    elements.contactStatus.classList.remove("success", "error");
+    if (state) {
+      elements.contactStatus.classList.add(state);
+    }
+  }
+
+  function abrirModalContacto() {
+    if (!elements.contactOverlay) return;
+    elements.contactOverlay.classList.remove("hidden");
+    elements.contactOverlay.setAttribute("aria-hidden", "false");
+    elements.body.style.overflow = "hidden";
+    setContactStatus();
+    const firstField = elements.contactForm?.querySelector("input, textarea, select");
+    if (firstField) {
+      firstField.focus();
+    }
+  }
+
+  function cerrarModalContacto() {
+    if (!elements.contactOverlay) return;
+    elements.contactOverlay.classList.add("hidden");
+    elements.contactOverlay.setAttribute("aria-hidden", "true");
+    elements.contactForm?.reset();
+    setContactStatus();
+    elements.body.style.overflow = "";
+  }
+
+  async function enviarMensajeContacto(event) {
+    event.preventDefault();
+    if (!elements.contactForm) return;
+
+    const formData = new FormData(elements.contactForm);
+    const name = (formData.get("name") || "").toString().trim();
+    const email = (formData.get("email") || "").toString().trim();
+    const message = (formData.get("message") || "").toString().trim();
+    const preferred = (formData.get("preferred_channel") || "").toString().trim();
+
+    if (!name || !email || !message) {
+      setContactStatus("Por favor completa todos los campos antes de enviar.", "error");
+      return;
+    }
+
+    const submitBtn = elements.contactForm.querySelector("[type='submit']");
+    const originalText = submitBtn?.textContent || "";
+
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Enviando...";
+    }
+
+    setContactStatus("Enviando tu mensaje...", "");
+
+    const payload = {
+      name,
+      email,
+      message,
+      preferred_channel: preferred,
+      _subject: "Nuevo mensaje desde Nails Finder",
+      _autoresponse: CONTACT_AUTORESPONSE,
+      _replyto: email,
+      _template: "table",
+    };
+
+    try {
+      const response = await fetch(FORM_SUBMIT_ENDPOINT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.json().catch(() => ({}));
+        const messageResponse = errorBody.message || "No pudimos enviar tu mensaje. Intenta nuevamente.";
+        throw new Error(messageResponse);
+      }
+
+      setContactStatus("¡Listo! Te enviamos un mensaje de bienvenida a tu correo.", "success");
+      elements.contactForm.reset();
+    } catch (error) {
+      console.error(error);
+      setContactStatus(error.message || "No pudimos enviar tu mensaje. Intenta nuevamente.", "error");
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+      }
+    }
+  }
+
   async function enviarReserva(event) {
     event.preventDefault();
     if (!elements.modalForm || !profesionalActual) {
@@ -570,6 +682,19 @@ document.addEventListener("DOMContentLoaded", () => {
   elements.btnLogout?.addEventListener("click", handleLogout);
   elements.btnContratar?.addEventListener("click", abrirModal);
   elements.btnVolver?.addEventListener("click", volverListado);
+  elements.contactButton?.addEventListener("click", abrirModalContacto);
+  contactCloseButtons?.forEach((btn) => btn.addEventListener("click", cerrarModalContacto));
+  elements.contactOverlay?.addEventListener("click", (event) => {
+    if (event.target === elements.contactOverlay) {
+      cerrarModalContacto();
+    }
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && elements.contactOverlay && !elements.contactOverlay.classList.contains("hidden")) {
+      cerrarModalContacto();
+    }
+  });
+  elements.contactForm?.addEventListener("submit", enviarMensajeContacto);
   modalCloseBtn?.addEventListener("click", cerrarModal);
   modalCancelBtn?.addEventListener("click", cerrarModal);
   elements.modalOverlay?.addEventListener("click", (event) => {

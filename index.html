@@ -96,6 +96,49 @@
         </form>
       </div>
     </div>
+
+    <div id="modal-contacto" class="modal-overlay hidden" aria-hidden="true">
+      <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="contacto-titulo">
+        <div class="modal-header">
+          <h3 id="contacto-titulo">Contáctanos</h3>
+          <button type="button" class="modal-close" aria-label="Cerrar modal" data-contact-close>&times;</button>
+        </div>
+        <form id="form-contacto" class="modal-form">
+          <div>
+            <label for="contacto-nombre">Nombre</label>
+            <input type="text" id="contacto-nombre" name="name" placeholder="Tu nombre" required />
+          </div>
+          <div>
+            <label for="contacto-email">Correo electrónico</label>
+            <input type="email" id="contacto-email" name="email" placeholder="nombre@correo.com" required />
+          </div>
+          <div>
+            <label for="contacto-mensaje">Mensaje</label>
+            <textarea id="contacto-mensaje" name="message" rows="4" placeholder="Cuéntanos cómo podemos ayudarte" required></textarea>
+          </div>
+          <div>
+            <label for="contacto-medio">¿Cómo prefieres que te contactemos?</label>
+            <select id="contacto-medio" name="preferred_channel" required>
+              <option value="">Selecciona una opción</option>
+              <option value="email">Correo electrónico</option>
+              <option value="whatsapp">WhatsApp</option>
+              <option value="telefono">Teléfono</option>
+            </select>
+          </div>
+          <p id="contacto-status" class="form-status" aria-live="polite"></p>
+          <div class="modal-actions">
+            <button type="button" class="btn-secondary" data-contact-cancel>Cancelar</button>
+            <button type="submit" class="btn-contratar">Enviar mensaje</button>
+          </div>
+        </form>
+        <div class="contact-alt">
+          <span>¿Prefieres escribirnos por WhatsApp?</span>
+          <a id="contacto-whatsapp" class="btn-whatsapp" href="#" target="_blank" rel="noopener">
+            Escribir por WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
   </main>
 
   <div id="lightbox" class="lightbox hidden" aria-hidden="true">
